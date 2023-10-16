@@ -109,8 +109,25 @@ export function getBundleSizes() {
 export const isPublishable = () =>
   ['production', 'beta', 'test'].includes(getChannel())
 
+function getReleaseBranchName(): string {
+  return process.env.GITHUB_REF?.replace(/^refs\/heads\//, '') ?? ''
+}
+
+function getChannelFromBranch(): string | undefined {
+  console.log(getReleaseBranchName())
+  // Branch name format: __release-CHANNEL-DEPLOY_ID
+  const pieces = getReleaseBranchName().split('-')
+  if (pieces.length < 3 || pieces[0] !== '__release') {
+    return
+  }
+  return pieces[1]
+}
+
 export const getChannel = () =>
-  process.env.RELEASE_CHANNEL ?? process.env.NODE_ENV ?? 'development'
+  process.env.RELEASE_CHANNEL ??
+  process.env.NODE_ENV ??
+  getChannelFromBranch() ??
+  'development'
 
 export function getDistArchitecture(): 'arm64' | 'x64' {
   // If a specific npm_config_arch is set, we use that one instead of the OS arch (to support cross compilation)
