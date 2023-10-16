@@ -113,7 +113,11 @@ function getReleaseBranchName(): string {
   return process.env.GITHUB_REF?.replace(/^refs\/heads\//, '') ?? ''
 }
 
-function getChannelFromPackage(): string | null {
+function getChannelFromBranch(): string | null {
+  if (!getReleaseBranchName().includes('releases/')) {
+    return null
+  }
+
   if (getVersion().includes('test')) {
     return 'test'
   }
@@ -122,17 +126,13 @@ function getChannelFromPackage(): string | null {
     return 'beta'
   }
 
-  if (getReleaseBranchName().includes('releases/')) {
-    return 'production'
-  }
-
-  return null
+  return 'production'
 }
 
 export const getChannel = () =>
   process.env.RELEASE_CHANNEL ??
   process.env.NODE_ENV ??
-  getChannelFromPackage() ??
+  getChannelFromBranch() ??
   'development'
 
 export function getDistArchitecture(): 'arm64' | 'x64' {
