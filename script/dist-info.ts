@@ -129,11 +129,24 @@ function getChannelFromBranch(): string | null {
   return 'production'
 }
 
-export const getChannel = () =>
-  process.env.RELEASE_CHANNEL ??
-  process.env.NODE_ENV ??
-  getChannelFromBranch() ??
-  'development'
+export const getChannel = () => {
+  console.log('getChannelFromBranch', getReleaseBranchName())
+  console.log(
+    'RELEASE CHANNEL',
+    process.env.RELEASE_CHANNEL ? process.env.RELEASE_CHANNEL.length : 'nope'
+  )
+  console.log(
+    'NODE_ENV',
+    process.env.NODE_ENV ? process.env.NODE_ENV.length : 'nope'
+  )
+
+  return (
+    process.env.RELEASE_CHANNEL ??
+    process.env.NODE_ENV ??
+    getChannelFromBranch() ??
+    'development'
+  )
+}
 
 export function getDistArchitecture(): 'arm64' | 'x64' {
   // If a specific npm_config_arch is set, we use that one instead of the OS arch (to support cross compilation)
