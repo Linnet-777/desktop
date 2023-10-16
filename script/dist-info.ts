@@ -113,7 +113,7 @@ function getReleaseBranchName(): string {
   return process.env.GITHUB_REF?.replace(/^refs\/heads\//, '') ?? ''
 }
 
-function getChannelFromPackage(): string | undefined {
+function getChannelFromPackage(): string | null {
   if (getVersion().includes('test')) {
     return 'test'
   }
@@ -125,6 +125,8 @@ function getChannelFromPackage(): string | undefined {
   if (getReleaseBranchName().includes('releases/')) {
     return 'production'
   }
+
+  return null
 }
 
 export const getChannel = () =>
